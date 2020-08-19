@@ -1,7 +1,9 @@
 def sockMerchant(n, ar):
+    print("sockMerchant called with param n=",n,"and ar=",ar)
     paired=[]
     a=0
     for sock in ar:
+        print("sock=",sock)
         if sock in paired:
             paired.remove(sock)
             a+=1
