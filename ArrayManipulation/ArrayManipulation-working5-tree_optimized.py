@@ -25,47 +25,40 @@ def arrayManipulation(n, queries):
     
             return self.weight + max(left,right)
             
-        def BTree_print(self):
-            print("s>{} e>{} len>{} w>{}".format(self.start,self.end,self.length,self.weight))
-            if self.left is not None:
-                print("l>")
-                self.left.BTree_print()
-            if self.right is not None:
-                print("r>")
-                self.right.BTree_print()
-        
         def insert(self,vector):
-            # if __debug__:
-            #     start=time()
             if self.start >= vector[0] and self.end <= vector[1]:
                 self.weight+=vector[2]
                 return
             if self.start > vector[1] or self.end < vector[0]: 
                 # Nothing to see here
                 return
-            if self.left is None:
-                # Creating left
-                self.left=BTree(self.start,self.start + int((self.end - self.start)/2),0)
-            if self.right is None:
-                # Creatig right
-                self.right=BTree(self.end - int((self.end - self.start)/2),self.end,0)
-             
-            self.left.insert(vector)  
-            self.right.insert(vector)      
-            # if __debug__ :
-            #      print("Insert for {} completed in {}".format(vector,time()-start))
-    
+            # Trying to optimize
+            half_length = int((self.end - self.start)/2)
+            left_end = self.start + half_length
+            right_start = self.end - half_length
             
+            if vector[0] <= left_end or vector[1] <= left_end:
+                if self.left is None:
+                    # Creating left
+                    self.left=BTree(self.start, left_end,0)
+                self.left.insert(vector)
+                
+            if vector[0] >= right_start or vector[1] >= right_start:
+                if self.right is None:
+                    # Creating right
+                    self.right=BTree(right_start, self.end, 0)
+                self.right.insert(vector)    
+    
     def distance(n):
         #return(math.ceil(math.sqrt(n))**2-1)
         return(2**math.ceil(math.log(n,2)))
- 
+        
     tree=BTree(0,distance(n))
     
     if __debug__:
         starttime=time()
-    
-    for query in sorted(queries,key=lambda x: x[0]):  
+        
+    for query in queries: #sorted(queries,key=lambda x: x[0]):
         tree.insert([query[0]-1,query[1]-1,query[2]])
     if __debug__:        
         print("Insert completed in {}".format(time()-starttime))
@@ -91,11 +84,6 @@ if __name__=="__main__":
     queries=[[1, 5, 3],[4, 8, 7],[6, 9, 1]]
     n=10
     # expected 10
-    print(arrayManipulation(n,queries))
-
-    n=10
-    queries=[[2,6,8],[3,5,7],[1,8,1],[5,9,15]]
-    # expected 31
     print(arrayManipulation(n,queries))
 
     f = open("input07-q.txt")
